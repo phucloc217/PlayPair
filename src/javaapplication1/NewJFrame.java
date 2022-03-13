@@ -11,6 +11,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import javax.swing.JOptionPane;
+import javax.swing.*;
+import javax.swing; 
 
 /**
  *
@@ -243,7 +245,68 @@ public class NewJFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        // TODO add your handling code here:
+          if (jTextArea1.getText().isEmpty() || jTextArea1.getText().isBlank()) {
+
+            JOptionPane.showMessageDialog(null, "Bạn phải nhập vào văn bản cần mã hóa");
+            return;
+        }
+        char[][] key = new char[5][5];
+        char tmp[] = jTextArea3.getText().toCharArray();
+        int count = 0;
+        for (int i = 0; i < 5; i++) {
+            for (int j = 0; j < 5; j++) {
+                if (count == tmp.length) {
+                    break;
+                }
+
+                key[i][j] = tmp[count++];
+            }
+        }
+        char[] input = jTextArea1.getText().replaceAll("\\s+", "").replaceAll("\\d+", "").replaceAll("\\W+", "").replaceAll("[j|J]", "i").toUpperCase().toCharArray();
+        char[] plaintext = new char[input.length * 3];
+        String tmp1 = "";
+        for (int i = 0; i < input.length;) {
+            if (i == input.length - 1) {
+                plaintext[tmp1.length()] = input[i];
+                plaintext[tmp1.length() + 1] = 'O';
+                tmp1 = String.valueOf(plaintext);
+                tmp1 = tmp1.replaceAll("\\s+", "").replaceAll("\\d+", "").replaceAll("\\W+", "").replaceAll("[j|J]", "i").toUpperCase();
+                i++;
+            } else if (input[i] != input[i + 1]) {
+                plaintext[tmp1.length()] = input[i];
+                plaintext[tmp1.length() + 1] = input[i + 1];
+                tmp1 = String.valueOf(plaintext);
+                tmp1 = tmp1.replaceAll("\\s+", "").replaceAll("\\d+", "").replaceAll("\\W+", "").replaceAll("[j|J]", "i").toUpperCase();
+                i += 2;
+            } else {
+                plaintext[tmp1.length()] = input[i];
+                plaintext[tmp1.length() + 1] = 'O';
+                tmp1 = String.valueOf(plaintext);
+                tmp1 = tmp1.replaceAll("\\s+", "").replaceAll("\\d+", "").replaceAll("\\W+", "").replaceAll("[j|J]", "i").toUpperCase();
+                i++;
+            }
+
+        }
+         JOptionPane.showMessageDialog(null, tmp1);
+        String cyphertext = "";
+        for (int i = 0; i < plaintext.length - 1;i += 2) {
+            if (plaintext[i] != plaintext[i + 1]) {
+                Position p1 = positionOfChar(key, plaintext[i]);
+                Position p2 = positionOfChar(key, plaintext[i + 1]);
+                if (p1.x == p2.x) {
+                    cyphertext += key[p1.x][(p1.y -1) % 5];
+                    cyphertext += key[p2.x][(p2.y - 1) % 5];
+                } else if (p1.y == p2.y) {
+                    cyphertext += key[(p1.x - 1) % 5][p1.y];
+                    cyphertext += key[(p2.x - 1) % 5][p2.y];
+                } else {
+                    cyphertext += key[p1.x][p2.y];
+                    cyphertext += key[p2.x][p1.y];
+                }
+                
+            }
+        }
+        jTextArea2.setText(cyphertext);
     }//GEN-LAST:event_jButton3ActionPerformed
 
     /**
